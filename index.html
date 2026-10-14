@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skip Count Adventure</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#3a2e5c; --muted:#8a80a8; --card:#ffffff; --cell:#ffffff;
+  --bg1:#fff4df; --bg2:#e3f2ff; --c:#ff6b9a; --wrong:#ff5a5a;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:'Baloo 2','Chalkboard SE','Comic Sans MS',system-ui,sans-serif;
+  color:var(--ink);
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));
+  min-height:100vh; overflow-x:hidden;
+  transition:--c .3s;
+}
+button{font-family:inherit;cursor:pointer;border:none}
+.deco{position:fixed;font-size:46px;opacity:.55;pointer-events:none;z-index:0;animation:drift 18s linear infinite}
+.deco:nth-child(1){top:8%;left:-60px;animation-duration:26s}
+.deco:nth-child(2){top:45%;left:-60px;animation-duration:34s;animation-delay:-12s}
+.deco:nth-child(3){top:78%;left:-60px;animation-duration:30s;animation-delay:-20s}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(calc(100vw + 120px))}}
+
+.wrap{position:relative;z-index:1;max-width:640px;margin:0 auto;padding:12px 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;gap:8px}
+h1{margin:0;font-size:clamp(24px,6vw,36px);font-weight:800;letter-spacing:.5px;line-height:1.1}
+h1 span{color:var(--c)}
+.top-right{display:flex;align-items:center;gap:8px}
+#stars{background:#fff;border-radius:999px;padding:4px 14px;font-weight:800;font-size:20px;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+#stars.bump{animation:pop .45s}
+#soundBtn{background:#fff;border-radius:50%;width:42px;height:42px;font-size:20px;box-shadow:0 3px 0 rgba(0,0,0,.08)}
+#stickers{min-height:28px;font-size:22px;letter-spacing:3px;margin-top:4px;text-align:right}
+#stickers .new{display:inline-block;animation:pop .6s}
+
+.mascot-row{display:flex;align-items:center;gap:12px;margin:10px 0 6px}
+#mascot{font-size:64px;animation:bob 1.6s ease-in-out infinite;flex:none;line-height:1}
+.bubble{position:relative;background:#fff;border-radius:20px;padding:10px 16px;font-size:clamp(16px,4.4vw,22px);font-weight:700;box-shadow:0 4px 0 rgba(0,0,0,.07);flex:1}
+.bubble::before{content:"";position:absolute;left:-10px;top:50%;margin-top:-10px;border:10px solid transparent;border-right-color:#fff;border-left:0}
+.bubble.pop{animation:pop .35s}
+
+.picker{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:10px 0}
+.picker .lbl{font-weight:800;font-size:18px;margin-right:4px}
+.pick{width:62px;height:62px;border-radius:50%;background:#fff;color:var(--ink);font-size:24px;font-weight:800;line-height:1;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 0 rgba(0,0,0,.1);transition:transform .15s}
+.pick small{font-size:16px;margin-top:2px}
+.pick:hover{transform:translateY(-2px)}
+.pick.on{background:var(--pc);color:#fff;transform:scale(1.1);box-shadow:0 4px 0 rgba(0,0,0,.18),0 0 0 4px #fff}
+
+.tabs{display:flex;gap:6px;background:rgba(255,255,255,.6);padding:6px;border-radius:999px;margin:6px 0 14px}
+.tab{flex:1;padding:8px 4px;border-radius:999px;background:transparent;font-size:clamp(14px,3.8vw,18px);font-weight:800;color:var(--muted)}
+.tab.on{background:var(--c);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.12)}
+
+.panel.hidden{display:none}
+.controls{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:10px}
+.btn{background:var(--c);color:#fff;font-size:18px;font-weight:800;padding:8px 18px;border-radius:999px;box-shadow:0 4px 0 rgba(0,0,0,.18);transition:transform .1s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.btn.ghost{background:#fff;color:var(--ink)}
+
+.grid-wrap{padding-top:26px}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;max-width:520px;margin:0 auto}
+.cell{position:relative;aspect-ratio:1;border-radius:10px;background:var(--cell);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(12px,3.4vw,20px);box-shadow:0 2px 0 rgba(0,0,0,.08);user-select:none;-webkit-user-select:none;transition:background .25s,transform .25s,color .25s}
+.cell.lit{background:var(--c);color:#fff;transform:scale(1.06);z-index:1}
+.cell.tappable:hover{background:#fff7d6}
+.cell.lit.tappable:hover{background:var(--c)}
+.cell.wrong{background:var(--wrong);color:#fff;animation:shake .4s}
+.cell.hint{animation:glow 1s ease-in-out 3}
+.cell .mark{position:absolute;top:-6px;right:-4px;font-size:.75em}
+.hopper{position:absolute;left:50%;bottom:52%;font-size:1.7em;z-index:5;pointer-events:none;animation:hop .45s ease-out;transform:translate(-50%,0)}
+.strip{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:14px;min-height:34px}
+.chip{background:var(--c);color:#fff;border-radius:999px;padding:2px 12px;font-weight:800;font-size:18px;animation:pop .3s}
+.chip.comma{background:transparent;color:var(--muted);padding:2px 0}
+
+.card{background:#fff;border-radius:24px;padding:22px 10px 26px;box-shadow:0 6px 0 rgba(0,0,0,.07);text-align:center}
+.seq{display:flex;align-items:flex-end;justify-content:center;margin:10px 0 26px}
+.ball{width:clamp(46px,13vw,78px);height:clamp(46px,13vw,78px);border-radius:50%;background:var(--c);color:#fff;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,6vw,34px);font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.15);flex:none}
+.ball.blank{background:#fff;color:var(--c);border:4px dashed var(--c);box-shadow:none;animation:pulse 1.2s ease-in-out infinite}
+.ball.filled{animation:pop .5s}
+.jump{width:clamp(22px,6.5vw,44px);display:flex;flex-direction:column;align-items:center;margin-bottom:clamp(30px,9vw,54px);color:var(--c);font-weight:800;font-size:clamp(12px,3.4vw,16px);flex:none}
+.jump svg{width:100%;height:auto;overflow:visible}
+.jump.glow{animation:pop .5s 2}
+.opts{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.opt{width:clamp(72px,22vw,100px);height:clamp(72px,22vw,100px);border-radius:26px;background:#fff;border:4px solid var(--c);color:var(--ink);font-size:clamp(28px,8vw,40px);font-weight:800;box-shadow:0 5px 0 rgba(0,0,0,.12);transition:transform .1s}
+.opt:hover{transform:translateY(-3px)}
+.opt.wrong{border-color:var(--wrong);color:var(--wrong);opacity:.6;animation:shake .4s}
+.opt.right{background:var(--c);color:#fff}
+.q{font-size:clamp(18px,5vw,24px);font-weight:800;margin:0 0 4px}
+
+.prompt{text-align:center;font-size:clamp(22px,6vw,32px);font-weight:800;margin:0 0 4px}
+.prompt b{color:var(--c)}
+.dots{display:flex;justify-content:center;gap:6px;margin-bottom:2px}
+.dot{width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 2px var(--c)}
+.dot.on{background:var(--c);animation:pop .3s}
+.center{text-align:center;margin-top:14px}
+
+@keyframes pop{0%{transform:scale(.6)}60%{transform:scale(1.18)}100%{transform:scale(1)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+@keyframes hop{0%{transform:translate(-50%,12px) scale(.7)}55%{transform:translate(-50%,-16px) scale(1.15)}100%{transform:translate(-50%,0) scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 var(--c)}50%{box-shadow:0 0 0 6px var(--c);transform:scale(1.12)}}
+
+#fx{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:50}
+</style>
+</head>
+<body>
+<div class="deco">☁️</div><div class="deco">🎈</div><div class="deco">☁️</div>
+
+<div class="wrap">
+  <header>
+    <h1>Skip Count <span>Adventure</span></h1>
+    <div class="top-right">
+      <div id="stars">⭐ 0</div>
+      <button id="soundBtn" title="Sound on/off">🔊</button>
+    </div>
+  </header>
+  <div id="stickers" title="Your stickers! Get one every 5 stars."></div>
+
+  <section class="mascot-row">
+    <div id="mascot">🐸</div>
+    <div class="bubble" id="msg">Hi! Let's skip count together!</div>
+  </section>
+
+  <section class="picker" id="picker"><span class="lbl">Count by:</span></section>
+
+  <nav class="tabs">
+    <button class="tab on" data-mode="learn">🐾 Hop</button>
+    <button class="tab" data-mode="next">❓ What's Next</button>
+    <button class="tab" data-mode="tap">👆 Tap It</button>
+  </nav>
+
+  <main>
+    <div id="learn" class="panel">
+      <div class="controls">
+        <button class="btn" id="hopAll">▶ Hop to 100</button>
+        <button class="btn ghost" id="hopOne">👣 One hop</button>
+        <button class="btn ghost" id="hopReset">↺ Start over</button>
+      </div>
+      <div class="grid-wrap"><div class="grid" id="learnGrid"></div></div>
+      <div class="strip" id="strip"></div>
+    </div>
+
+    <div id="next" class="panel hidden">
+      <div class="card">
+        <p class="q" id="nextQ">Which number is missing?</p>
+        <div class="seq" id="seq"></div>
+        <div class="opts" id="opts"></div>
+      </div>
+    </div>
+
+    <div id="tap" class="panel hidden">
+      <p class="prompt" id="tapPrompt"></p>
+      <div class="dots" id="dots"></div>
+      <div class="grid-wrap"><div class="grid" id="tapGrid"></div></div>
+      <div class="center"><button class="btn" id="tapAgain" hidden>🎉 Play again</button></div>
+    </div>
+  </main>
+</div>
+<canvas id="fx"></canvas>
+
+<script>
+const COUNTS = [2, 3, 4, 5, 10];
+const COLORS = {2:'#ff6b9a', 3:'#ff9f43', 4:'#e0a800', 5:'#27ae60', 10:'#3d8bfd'};
+const ANIMALS = {2:'🐸', 3:'🐰', 4:'🦘', 5:'🐯', 10:'🚀'};
+const PRAISE = ["Awesome!", "Great job!", "You're a star!", "Super!", "So smart!", "Amazing!", "High five!", "Yay!"];
+const STICKERS = ['🦄','🌈','🍦','🎀','🦋','🍓','🐳','🌸','🍭','👑','🐼','🧁','🌟','🐬','🍉','🎠'];
+const TAP_GOAL = 10;
+
+let n = 2, mode = 'learn', soundOn = true, stars = 0;
+const $ = id => document.getElementById(id);
+const rand = m => Math.floor(Math.random() * m);
+const shuffle = a => { for (let i = a.length - 1; i > 0; i--) { const j = rand(i + 1); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const pick = a => a[rand(a.length)];
+
+try { stars = parseInt(localStorage.getItem('skipStars') || '0', 10) || 0; } catch (e) {}
+
+/* ---------- sound & speech ---------- */
+let ac = null;
+function audio() {
+  if (!ac) { try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {} }
+  return ac;
+}
+function tone(freq, dur, type = 'sine', when = 0, vol = 0.15, toFreq) {
+  if (!soundOn || !audio()) return;
+  const t = ac.currentTime + when, o = ac.createOscillator(), g = ac.createGain();
+  o.type = type;
+  o.frequency.setValueAtTime(freq, t);
+  if (toFreq) o.frequency.exponentialRampToValueAtTime(toFreq, t + dur);
+  g.gain.setValueAtTime(vol, t);
+  g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g).connect(ac.destination);
+  o.start(t); o.stop(t + dur);
+}
+const sfxDing = () => { tone(660, .15); tone(880, .3, 'sine', .12); };
+const sfxBuzz = () => tone(200, .25, 'square', 0, .05, 120);
+const sfxHop = () => tone(300, .18, 'triangle', 0, .12, 700);
+const sfxWin = () => [523, 659, 784, 1047].forEach((f, i) => tone(f, .25, 'sine', i * .12));
+
+function voice() {
+  const vs = window.speechSynthesis ? speechSynthesis.getVoices() : [];
+  const en = vs.filter(v => /^en(-|_)?/i.test(v.lang));
+  return en.find(v => /Samantha|Google US English|Karen|Moira|Tessa/i.test(v.name)) || en.find(v => /en-US/i.test(v.lang)) || en[0];
+}
+function say(text) {
+  if (!soundOn || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  const v = voice(); if (v) u.voice = v;
+  u.lang = 'en-US'; u.rate = 0.92; u.pitch = 1.15;
+  speechSynthesis.speak(u);
+}
+if (window.speechSynthesis) speechSynthesis.onvoiceschanged = () => {};
+
+$('soundBtn').onclick = () => {
+  soundOn = !soundOn;
+  $('soundBtn').textContent = soundOn ? '🔊' : '🔇';
+  if (!soundOn && window.speechSynthesis) speechSynthesis.cancel();
+};
+
+/* ---------- mascot, stars, stickers ---------- */
+function setMsg(t) {
+  const m = $('msg'); m.textContent = t;
+  m.classList.remove('pop'); void m.offsetWidth; m.classList.add('pop');
+}
+function renderStars(bump) {
+  $('stars').textContent = '⭐ ' + stars;
+  if (bump) { const s = $('stars'); s.classList.remove('bump'); void s.offsetWidth; s.classList.add('bump'); }
+  const k = Math.floor(stars / 5);
+  $('stickers').innerHTML = Array.from({length: k}, (_, i) =>
+    `<span class="${bump && i === k - 1 && stars % 5 === 0 ? 'new' : ''}">${STICKERS[i % STICKERS.length]}</span>`).join('');
+}
+function addStars(k) {
+  const before = Math.floor(stars / 5);
+  stars += k;
+  try { localStorage.setItem('skipStars', String(stars)); } catch (e) {}
+  renderStars(true);
+  if (Math.floor(stars / 5) > before) {
+    setTimeout(() => { setMsg('You got a new sticker! ' + STICKERS[(Math.floor(stars / 5) - 1) % STICKERS.length]); celebrate(); }, 1200);
+  }
+}
+
+/* ---------- confetti ---------- */
+const fx = $('fx'), ctx = fx.getContext('2d');
+let parts = [], raf = null;
+function resizeFx() {
+  const d = window.devicePixelRatio || 1;
+  fx.width = innerWidth * d; fx.height = innerHeight * d;
+  ctx.setTransform(d, 0, 0, d, 0, 0);
+}
+addEventListener('resize', resizeFx); resizeFx();
+function celebrate() {
+  const pal = ['#ff6b9a', '#ff9f43', '#ffd32a', '#2ecc71', '#3d8bfd', '#a55eea'];
+  for (let i = 0; i < 150; i++) {
+    parts.push({
+      x: innerWidth / 2 + (Math.random() - .5) * 240, y: innerHeight * .4,
+      vx: (Math.random() - .5) * 14, vy: -Math.random() * 13 - 4,
+      s: 6 + Math.random() * 7, c: pick(pal), r: Math.random() * 6, vr: (Math.random() - .5) * .4, life: 0
+    });
+  }
+  if (!raf) raf = requestAnimationFrame(loopFx);
+}
+function loopFx() {
+  ctx.clearRect(0, 0, innerWidth, innerHeight);
+  for (const p of parts) {
+    p.vy += .32; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+    ctx.fillStyle = p.c; ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+    ctx.restore();
+  }
+  parts = parts.filter(p => p.y < innerHeight + 40 && p.life < 260);
+  raf = parts.length ? requestAnimationFrame(loopFx) : null;
+  if (!raf) ctx.clearRect(0, 0, innerWidth, innerHeight);
+}
+
+/* ---------- picker & tabs ---------- */
+COUNTS.forEach(c => {
+  const b = document.createElement('button');
+  b.className = 'pick'; b.dataset.n = c;
+  b.style.setProperty('--pc', COLORS[c]);
+  b.innerHTML = `${c}s<small>${ANIMALS[c]}</small>`;
+  b.onclick = () => setCount(c);
+  $('picker').appendChild(b);
+});
+function setCount(c) {
+  n = c;
+  document.documentElement.style.setProperty('--c', COLORS[c]);
+  document.querySelectorAll('.pick').forEach(b => b.classList.toggle('on', +b.dataset.n === c));
+  $('mascot').textContent = ANIMALS[c];
+  startMode();
+}
+document.querySelectorAll('.tab').forEach(t => t.onclick = () => {
+  mode = t.dataset.mode;
+  document.querySelectorAll('.tab').forEach(x => x.classList.toggle('on', x === t));
+  ['learn', 'next', 'tap'].forEach(id => $(id).classList.toggle('hidden', id !== mode));
+  startMode();
+});
+function startMode() {
+  stopHop();
+  if (mode === 'learn') learnReset();
+  else if (mode === 'next') newNext();
+  else newTap();
+}
+
+function buildGrid(el, onTap) {
+  el.innerHTML = '';
+  const cells = {};
+  for (let v = 1; v <= 100; v++) {
+    const d = document.createElement('div');
+    d.className = 'cell' + (onTap ? ' tappable' : '');
+    d.textContent = v;
+    d.onclick = () => onTap ? onTap(v, d) : say(String(v));
+    el.appendChild(d); cells[v] = d;
+  }
+  return cells;
+}
+
+/* ---------- mode 1: hop along the hundred chart ---------- */
+let learnCells = {}, hopK = 0, hopTimer = null, learnDone = false;
+function learnReset() {
+  learnCells = buildGrid($('learnGrid'));
+  hopK = 0; learnDone = false;
+  $('strip').innerHTML = '';
+  setMsg(`Let's count by ${n}s! Press Hop!`);
+  say(`Let's count by ${n}s!`);
+}
+function stopHop() {
+  if (hopTimer) { clearInterval(hopTimer); hopTimer = null; }
+  $('hopAll').textContent = '▶ Hop to 100';
+}
+function hopOnce() {
+  if (learnDone) return;
+  hopK++;
+  const v = n * hopK, cell = learnCells[v];
+  document.querySelectorAll('#learnGrid .hopper').forEach(h => h.remove());
+  cell.classList.add('lit');
+  const h = document.createElement('span');
+  h.className = 'hopper'; h.textContent = ANIMALS[n];
+  cell.appendChild(h);
+  const strip = $('strip');
+  if (strip.children.length) strip.insertAdjacentHTML('beforeend', '<span class="chip comma">,</span>');
+  strip.insertAdjacentHTML('beforeend', `<span class="chip">${v}</span>`);
+  sfxHop();
+  say(String(v));
+  setMsg(hopK === 1 ? `Start at ${v}!` : `${v - n} + ${n} = ${v}`);
+  if (n * (hopK + 1) > 100) {
+    learnDone = true;
+    stopHop();
+    setTimeout(() => {
+      sfxWin(); celebrate(); addStars(1);
+      setMsg(`Hooray! You counted by ${n}s all the way to ${v}! 🎉`);
+      say(`Hooray! You counted by ${n}s all the way to ${v}!`);
+    }, 1100);
+  }
+}
+$('hopAll').onclick = () => {
+  if (hopTimer) { stopHop(); return; }
+  if (learnDone) learnReset();
+  hopOnce();
+  if (learnDone) return;
+  $('hopAll').textContent = '⏸ Pause';
+  hopTimer = setInterval(() => { hopOnce(); if (learnDone) stopHop(); }, n === 2 ? 750 : 950);
+};
+$('hopOne').onclick = () => { stopHop(); if (learnDone) learnReset(); hopOnce(); };
+$('hopReset').onclick = () => { stopHop(); learnReset(); };
+
+/* ---------- mode 2: what's next / missing number ---------- */
+let nextTerms = [], nextBlank = 0, nextLocked = false;
+function newNext() {
+  nextLocked = false;
+  const maxK = Math.min(Math.floor(100 / n), 20);
+  const start = 1 + rand(maxK - 4);
+  nextTerms = [0, 1, 2, 3, 4].map(i => n * (start + i));
+  nextBlank = Math.random() < 0.55 ? 4 : rand(5);
+  const ans = nextTerms[nextBlank];
+
+  const pool = shuffle([ans + n, ans - n, ans + 1, ans - 1, ans + 2, ans - 2, ans + 2 * n, ans + 10]);
+  const opts = [ans];
+  for (const x of pool) {
+    if (opts.length === 3) break;
+    if (x > 0 && !opts.includes(x) && !nextTerms.includes(x)) opts.push(x);
+  }
+  shuffle(opts);
+
+  $('nextQ').textContent = nextBlank === 4 ? 'What comes next?' : 'Which number is missing?';
+  const arc = `<svg viewBox="0 0 40 18"><path d="M3 17 Q20 -6 37 17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-dasharray="4 4"/></svg>`;
+  $('seq').innerHTML = nextTerms.map((t, i) =>
+    (i ? `<div class="jump">+${n}${arc}</div>` : '') +
+    `<div class="ball${i === nextBlank ? ' blank' : ''}" ${i === nextBlank ? 'id="blank"' : ''}>${i === nextBlank ? '?' : t}</div>`
+  ).join('');
+  $('opts').innerHTML = '';
+  opts.forEach(o => {
+    const b = document.createElement('button');
+    b.className = 'opt'; b.textContent = o;
+    b.onclick = () => answerNext(o, b);
+    $('opts').appendChild(b);
+  });
+  setMsg(`Count by ${n}s. Find the ${nextBlank === 4 ? 'next' : 'missing'} number!`);
+  say(nextTerms.map((t, i) => i === nextBlank ? 'hmm?' : t).join(', ') + (nextBlank === 4 ? '. What comes next?' : '. What is missing?'));
+}
+function answerNext(o, b) {
+  if (nextLocked || b.disabled) return;
+  const ans = nextTerms[nextBlank];
+  if (o === ans) {
+    nextLocked = true;
+    b.classList.add('right');
+    const bl = $('blank');
+    bl.textContent = ans; bl.classList.remove('blank'); bl.classList.add('filled');
+    sfxDing(); celebrate(); addStars(1);
+    const p = pick(PRAISE);
+    setMsg(`${p} ${nextTerms.join(', ')}`);
+    say(`${p} ${nextTerms.join(', ')}!`);
+    setTimeout(() => { if (mode === 'next') newNext(); }, 3200);
+  } else {
+    b.classList.add('wrong'); b.disabled = true;
+    sfxBuzz();
+    document.querySelectorAll('.jump').forEach(j => { j.classList.remove('glow'); void j.offsetWidth; j.classList.add('glow'); });
+    setMsg(`Oops! Try again. Each hop adds ${n}.`);
+    say(`Oops! Try again. Each hop adds ${n}.`);
+  }
+}
+
+/* ---------- mode 3: tap the chart ---------- */
+let tapCells = {}, tapFound = 0, tapWrong = 0;
+function newTap() {
+  tapFound = 0; tapWrong = 0;
+  tapCells = buildGrid($('tapGrid'), tapCell);
+  $('tapAgain').hidden = true;
+  $('dots').innerHTML = Array.from({length: TAP_GOAL}, () => '<span class="dot"></span>').join('');
+  $('tapPrompt').innerHTML = `Tap <b>${n}</b> to start!`;
+  setMsg(`Count by ${n}s on the chart. Tap ${TAP_GOAL} numbers!`);
+  say(`Count by ${n}s! Tap ${n} to start.`);
+}
+function tapCell(v, el) {
+  if (tapFound >= TAP_GOAL || el.classList.contains('lit')) { say(String(v)); return; }
+  const target = n * (tapFound + 1);
+  if (v === target) {
+    tapFound++; tapWrong = 0;
+    el.classList.remove('wrong', 'hint');
+    el.classList.add('lit');
+    el.insertAdjacentHTML('beforeend', '<span class="mark">⭐</span>');
+    $('dots').children[tapFound - 1].classList.add('on');
+    sfxDing();
+    say(String(v));
+    document.querySelectorAll('#tapGrid .hint').forEach(c => c.classList.remove('hint'));
+    if (tapFound === TAP_GOAL) {
+      $('tapPrompt').innerHTML = `You did it! 🎉`;
+      setTimeout(() => {
+        sfxWin(); celebrate(); addStars(3);
+        const seq = Array.from({length: TAP_GOAL}, (_, i) => n * (i + 1)).join(', ');
+        setMsg(`Wow! ${seq}! You earned 3 stars!`);
+        say(`Wow! ${seq}! You earned 3 stars!`);
+        $('tapAgain').hidden = false;
+      }, 700);
+    } else {
+      $('tapPrompt').innerHTML = `<b>${v}</b> + ${n} = ?`;
+      setMsg(pick(PRAISE) + ' What comes next?');
+    }
+  } else {
+    tapWrong++;
+    el.classList.remove('wrong'); void el.offsetWidth; el.classList.add('wrong');
+    setTimeout(() => el.classList.remove('wrong'), 600);
+    sfxBuzz();
+    if (tapWrong >= 2) {
+      const t = tapCells[target];
+      t.classList.remove('hint'); void t.offsetWidth; t.classList.add('hint');
+      setMsg(`Here's a hint! Look for the glowing number.`);
+      say(`Here's a hint!`);
+    } else {
+      const ask = tapFound ? `${n * tapFound} plus ${n}` : `the first number`;
+      setMsg(`Not ${v}. Try again!`);
+      say(`Not ${v}. What is ${ask}?`);
+    }
+  }
+}
+$('tapAgain').onclick = newTap;
+
+/* ---------- start ---------- */
+renderStars(false);
+setCount(2);
+</script>
+</body>
+</html>
