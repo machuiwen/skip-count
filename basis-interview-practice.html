@@ -1,0 +1,1016 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="light dark" />
+  <link rel="icon" href="data:," />
+  <title>BASIS 面试练习手册</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Noto+Serif+SC:wght@600;700;800&family=Andika:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f4f2ed;
+      --paper: #fffdfa;
+      --ink: #191b1b;
+      --muted: #5c605f;
+      --line: #c9c8c1;
+      --soft-line: #deddd7;
+      --accent: #dd4d2a;
+      --accent-ink: #8f2b15;
+      --accent-soft: #fae5dd;
+      --teal: #126a65;
+      --teal-soft: #dcecea;
+      --warn: #7a4e06;
+      --warn-soft: #f5e6bf;
+      --chip: #e8e6df;
+      --shadow: 0 18px 50px rgba(28, 27, 23, .09);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        color-scheme: dark;
+        --bg: #171918;
+        --paper: #202321;
+        --ink: #f3f0e9;
+        --muted: #c1c4bf;
+        --line: #555953;
+        --soft-line: #383c38;
+        --accent: #ff7958;
+        --accent-ink: #ffb29d;
+        --accent-soft: #48271f;
+        --teal: #70d0c7;
+        --teal-soft: #193c39;
+        --warn: #f0c36a;
+        --warn-soft: #493a1c;
+        --chip: #2c302d;
+        --shadow: 0 18px 50px rgba(0, 0, 0, .26);
+      }
+    }
+    :root[data-theme="dark"] {
+      color-scheme: dark;
+      --bg: #171918;
+      --paper: #202321;
+      --ink: #f3f0e9;
+      --muted: #c1c4bf;
+      --line: #555953;
+      --soft-line: #383c38;
+      --accent: #ff7958;
+      --accent-ink: #ffb29d;
+      --accent-soft: #48271f;
+      --teal: #70d0c7;
+      --teal-soft: #193c39;
+      --warn: #f0c36a;
+      --warn-soft: #493a1c;
+      --chip: #2c302d;
+      --shadow: 0 18px 50px rgba(0, 0, 0, .26);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font: 16px/1.7 "IBM Plex Sans", system-ui, sans-serif;
+    }
+    h1, h2, h3 { font-family: "Noto Serif SC", serif; }
+    button, input, select, textarea { font: inherit; color: inherit; }
+    :focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+    .en { font-family: "Andika", "IBM Plex Sans", sans-serif; }
+
+    .wrap { width: min(1080px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* header */
+    .mast { background: var(--paper); border-bottom: 1px solid var(--line); }
+    .mast .wrap { padding: 56px 0 40px; }
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; font-size: .82rem; font-weight: 600; color: var(--muted); }
+    .tags span { padding: 4px 10px; border: 1px solid var(--line); border-radius: 99px; }
+    .tags .hot { color: var(--accent); border-color: currentColor; }
+    h1 { margin: 0; font-size: clamp(2.2rem, 6vw, 4.4rem); line-height: 1.05; letter-spacing: -.04em; }
+    .dek { margin: 18px 0 0; max-width: 720px; color: var(--muted); font-size: 1.08rem; }
+    .rules { margin-top: 28px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+    .rules div { background: var(--paper); padding: 16px 18px; }
+    .rules b { display: block; color: var(--teal); }
+    .rules span { color: var(--muted); font-size: .94rem; }
+
+    /* nav */
+    .tabs { position: sticky; top: 0; z-index: 5; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+    .tabs .wrap { display: flex; gap: 4px 18px; flex-wrap: wrap; padding: 10px 0; }
+    .tabs a { color: var(--muted); text-decoration: none; font-weight: 600; font-size: .92rem; padding: 4px 0; }
+    .tabs a:hover { color: var(--accent); }
+    .tabs .tools { margin-left: auto; display: flex; gap: 8px; }
+
+    section { padding: 52px 0 12px; scroll-margin-top: 56px; }
+    .sec-head { display: flex; gap: 16px; align-items: baseline; margin-bottom: 8px; }
+    .sec-no { color: var(--accent); font-weight: 700; }
+    h2 { margin: 0; font-size: clamp(1.6rem, 3.6vw, 2.5rem); line-height: 1.15; letter-spacing: -.02em; }
+    .intro { margin: 6px 0 24px; color: var(--muted); max-width: 760px; }
+    h3 { margin: 0 0 10px; font-size: 1.18rem; }
+
+    .btn {
+      border: 0; border-radius: 4px; padding: 9px 14px; cursor: pointer; font-weight: 700;
+      background: var(--ink); color: var(--paper);
+    }
+    .btn:hover { background: var(--accent); }
+    .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+    .btn.ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn.small { padding: 5px 10px; font-size: .85rem; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip {
+      border: 1px solid var(--line); background: var(--paper); border-radius: 99px;
+      padding: 5px 12px; cursor: pointer; font-size: .9rem; font-weight: 600; color: var(--muted);
+    }
+    .chip[aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: var(--paper); }
+
+    .card { background: var(--paper); border: 1px solid var(--line); padding: 22px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .note { padding: 14px 18px; background: var(--teal-soft); border-left: 5px solid var(--teal); margin: 0 0 20px; }
+    .note strong { color: var(--teal); }
+    .caveat { padding: 14px 18px; background: var(--warn-soft); color: var(--warn); font-size: .92rem; margin: 18px 0 0; overflow-wrap: anywhere; }
+    ul.clean { margin: 0; padding-left: 1.2em; color: var(--muted); }
+    ul.clean li + li { margin-top: 4px; }
+    .tagline { font-size: .76rem; font-weight: 700; color: var(--teal); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* plan */
+    .plan { display: grid; gap: 0; border-top: 1px solid var(--line); }
+    .plan-row { display: grid; grid-template-columns: 170px 1fr; gap: 20px; padding: 18px 0; border-bottom: 1px solid var(--line); }
+    .plan-row time { font-weight: 700; color: var(--accent-ink); }
+    .plan-row time small { display: block; font-weight: 500; color: var(--muted); }
+    .plan-row p { margin: 0; color: var(--muted); }
+    .plan-row b { color: var(--ink); }
+    .countdown { font-weight: 700; color: var(--accent); }
+
+    /* flashcards */
+    .fc-shell { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 18px; }
+    .fc {
+      background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow);
+      padding: 28px; min-height: 300px; display: flex; flex-direction: column;
+    }
+    .fc .cat { color: var(--accent); font-weight: 700; font-size: .85rem; }
+    .fc .q { font-size: clamp(1.5rem, 3.4vw, 2.2rem); line-height: 1.3; margin: 14px 0 6px; font-weight: 700; }
+    .fc .zh { color: var(--muted); font-size: .95rem; }
+    .fc .hint { margin-top: 16px; padding: 14px 16px; background: var(--chip); display: none; }
+    .fc .hint.show { display: block; }
+    .fc .hint p { margin: 0 0 6px; }
+    .fc .hint p:last-child { margin: 0; }
+    .fc .actions { margin-top: auto; padding-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .fc .count { margin-left: auto; color: var(--muted); font-size: .86rem; }
+    .side h3 { margin-top: 0; }
+    .rate-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 10px; font-size: .9rem; color: var(--muted); }
+    select { background: var(--paper); border: 1px solid var(--line); border-radius: 4px; padding: 4px 8px; }
+
+    .qlist { margin-top: 22px; }
+    .qlist details { border-top: 1px solid var(--line); background: var(--paper); }
+    .qlist details:last-child { border-bottom: 1px solid var(--line); }
+    .qlist summary { padding: 14px 16px; cursor: pointer; font-weight: 700; }
+    .qlist summary span { color: var(--muted); font-weight: 500; font-size: .88rem; margin-left: 8px; }
+    .qlist table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+    .qlist td { padding: 9px 16px; border-top: 1px solid var(--soft-line); vertical-align: top; }
+    .qlist td:first-child { width: 46%; font-weight: 600; }
+    .qlist td:last-child { color: var(--muted); }
+
+    /* picture talk */
+    .scene-wrap { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 18px; align-items: start; }
+    .scene { background: #eaf6ff; border: 1px solid var(--line); padding: 0; line-height: 0; }
+    .scene svg { width: 100%; height: auto; display: block; }
+    .scene-q ol { margin: 0; padding-left: 1.3em; }
+    .scene-q li { padding: 7px 0; border-bottom: 1px solid var(--soft-line); }
+    .scene-q li .zh { display: block; color: var(--muted); font-size: .86rem; }
+    .speak { border: 0; background: none; cursor: pointer; color: var(--teal); font-size: 1rem; padding: 0 4px; }
+
+    /* sight words */
+    .sw-card {
+      display: flex; align-items: center; justify-content: center; min-height: 220px;
+      background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow);
+      font-size: clamp(3.5rem, 12vw, 6.5rem); font-weight: 700; letter-spacing: .02em;
+    }
+    .sw-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; align-items: center; }
+    .sw-stats { margin-left: auto; color: var(--muted); font-size: .9rem; }
+    .sw-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 16px; }
+    .sw-grid button {
+      border: 1px solid var(--line); background: var(--paper); border-radius: 4px; padding: 3px 9px;
+      cursor: pointer; font-family: "Andika", sans-serif; font-size: 1rem;
+    }
+    .sw-grid button.known { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); }
+
+    /* math */
+    .math-card { background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow); padding: 26px; min-height: 260px; display: flex; flex-direction: column; }
+    .math-q { font-size: 1.5rem; font-weight: 700; }
+    .math-vis { font-size: 2.3rem; line-height: 1.35; margin: 16px 0; word-break: break-all; }
+    .math-vis .big { font-size: 5rem; font-weight: 700; font-family: "Andika", sans-serif; }
+    .math-vis .grp { display: inline-block; padding: 4px 10px; border: 2px dashed var(--line); border-radius: 10px; margin: 4px; }
+    .math-ans { display: none; color: var(--teal); font-weight: 700; font-size: 1.2rem; }
+    .math-ans.show { display: block; }
+    .math-card .actions { margin-top: auto; display: flex; gap: 8px; flex-wrap: wrap; padding-top: 14px; }
+
+    /* mock */
+    .mock { border-top: 1px solid var(--line); }
+    .mock-row { display: grid; grid-template-columns: 110px 190px 1fr; gap: 18px; padding: 15px 0; border-bottom: 1px solid var(--line); }
+    .mock-row time { font-weight: 700; color: var(--accent-ink); }
+    .mock-row b { display: block; }
+    .mock-row .en { color: var(--ink); }
+    .mock-row p { margin: 0; color: var(--muted); }
+    .timer { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+    .timer output { font-size: 2rem; font-weight: 700; font-variant-numeric: tabular-nums; min-width: 5ch; }
+
+    /* parent */
+    .pq { background: var(--paper); border: 1px solid var(--line); padding: 24px; margin-bottom: 18px; }
+    .pq .flag { display: inline-block; font-size: .76rem; font-weight: 700; padding: 2px 8px; border-radius: 99px; margin-bottom: 10px; }
+    .flag.off { background: var(--accent-soft); color: var(--accent-ink); }
+    .flag.gen { background: var(--chip); color: var(--muted); }
+    .pq h3 { font-size: 1.35rem; }
+    .pq .en-q { color: var(--muted); font-style: italic; margin: -4px 0 14px; }
+    .frame { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--soft-line); border: 1px solid var(--soft-line); margin-bottom: 14px; }
+    .frame div { background: var(--paper); padding: 12px 14px; font-size: .92rem; }
+    .frame b { display: block; color: var(--teal); font-size: .84rem; }
+    .example { background: var(--chip); padding: 14px 16px; font-size: .94rem; margin-bottom: 14px; }
+    .example b { color: var(--accent-ink); }
+    .example p { margin: 4px 0 0; }
+    .avoid { font-size: .9rem; color: var(--muted); margin: 0 0 14px; }
+    .avoid b { color: var(--accent); }
+    textarea {
+      width: 100%; min-height: 110px; resize: vertical; padding: 12px; border: 1px solid var(--line);
+      background: var(--bg); border-radius: 4px; line-height: 1.6;
+    }
+    .ta-bar { display: flex; gap: 8px; align-items: center; margin-top: 8px; flex-wrap: wrap; font-size: .86rem; color: var(--muted); }
+    .ta-bar output { font-variant-numeric: tabular-nums; font-weight: 700; color: var(--accent); }
+    .follow { border-top: 1px solid var(--line); }
+    .follow-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .follow-row b { display: block; }
+    .follow-row p { margin: 0; color: var(--muted); font-size: .94rem; }
+
+    /* tracker */
+    .tracker { border-top: 1px solid var(--line); }
+    .tr-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--soft-line); }
+    .tr-row span small { display: block; color: var(--muted); font-size: .84rem; }
+    .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; }
+    .seg button { border: 0; background: var(--paper); padding: 5px 10px; cursor: pointer; font-size: .84rem; color: var(--muted); }
+    .seg button + button { border-left: 1px solid var(--line); }
+    .seg button[aria-pressed="true"][data-v="0"] { background: var(--accent-soft); color: var(--accent-ink); font-weight: 700; }
+    .seg button[aria-pressed="true"][data-v="1"] { background: var(--warn-soft); color: var(--warn); font-weight: 700; }
+    .seg button[aria-pressed="true"][data-v="2"] { background: var(--teal-soft); color: var(--teal); font-weight: 700; }
+    .checklist { list-style: none; margin: 0; padding: 0; }
+    .checklist li { border-top: 1px solid var(--soft-line); }
+    .checklist label { display: flex; gap: 10px; padding: 9px 0; cursor: pointer; }
+    .checklist input { margin-top: 6px; accent-color: var(--teal); }
+    .checklist input:checked + span { color: var(--muted); text-decoration: line-through; }
+
+    .footer { margin-top: 60px; padding: 28px 16px; border-top: 1px solid var(--line); text-align: center; color: var(--muted); font-size: .8rem; }
+
+    @media (max-width: 820px) {
+      .rules, .grid2, .grid3, .fc-shell, .scene-wrap, .frame { grid-template-columns: 1fr; }
+      .plan-row { grid-template-columns: 1fr; gap: 4px; }
+      .mock-row { grid-template-columns: 1fr; gap: 2px; }
+      .follow-row { grid-template-columns: 1fr; gap: 4px; }
+      .tabs .tools { margin-left: 0; }
+    }
+    @media (max-width: 560px) {
+      .mast .wrap { padding-top: 36px; }
+      .fc, .math-card, .pq, .card { padding: 18px; }
+      .tr-row { grid-template-columns: 1fr; }
+    }
+    @media print {
+      .tabs, .btn, .chip-row, .actions, .ta-bar, .sw-bar, .timer, .rate-row { display: none !important; }
+      body { background: #fff; color: #000; }
+      section { break-inside: avoid-page; padding-top: 24px; }
+      .fc, .math-card, .sw-card { box-shadow: none; }
+      .qlist details { display: block; }
+      .qlist details > *:not(summary) { display: block; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header class="mast">
+    <div class="wrap">
+      <div class="tags">
+        <span>BISV · TK / K</span>
+        <span>孩子 Play Date + 家长 Family Meeting</span>
+        <span class="hot">Early Play Date 截止 2026-11-18</span>
+      </div>
+      <h1>BASIS 面试练习手册</h1>
+      <p class="dek">按学校官方公布的测评范围，做成可以每天玩 10–15 分钟的练习。孩子练“听得懂、说得出”，家长练“讲具体的真实故事”。</p>
+      <div class="rules">
+        <div><b>练状态，不背答案</b><span>学校不鼓励正式备考。目标是孩子放松、愿意说。</span></div>
+        <div><b>全程英语、正常语速</b><span>练习时不翻译、不放慢。这是官方明确的门槛。</span></div>
+        <div><b>家长只做观察员</b><span>正式那天家长不能提示。平时就要练“忍住不帮”。</span></div>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="页面目录">
+    <div class="wrap">
+      <a href="#plan">练习计划</a>
+      <a href="#cards">孩子题卡</a>
+      <a href="#picture">看图说话</a>
+      <a href="#words">认词 & 数学</a>
+      <a href="#mock">模拟 Zoom</a>
+      <a href="#parent">家长面谈</a>
+      <a href="#track">进度 & 清单</a>
+      <span class="tools"><button class="btn ghost small" type="button" onclick="window.print()">打印</button></span>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- 00 PLAN -->
+    <section id="plan">
+      <div class="sec-head"><span class="sec-no">00</span><h2>五周练习计划</h2></div>
+      <p class="intro">今天是 2026-10-14，距 Early Play Date 截止 <span class="countdown" id="days-left">约 5 周</span>。可预约时段越晚越少，建议先约好时间，再倒推练习。</p>
+      <div class="plan">
+        <div class="plan-row"><time>第 1 周<small>摸底</small></time><p><b>做一次完整模拟（见 04）</b>，最好请孩子不太熟的大人在 Zoom 上问。在“进度追踪”里标出哪些还不会。家长同时写出三道官方题的初稿。</p></div>
+        <div class="plan-row"><time>第 2–3 周<small>补短板</small></time><p>每天 10–15 分钟，只练标成“还不会”的 1–2 项。用题卡、认词卡、数学卡当游戏玩。每天睡前用英语聊一本书。家长每周找人对练一次三道题。</p></div>
+        <div class="plan-row"><time>第 4 周<small>完整彩排</small></time><p><b>再做两次完整 30 分钟模拟</b>，用正式那天的电脑、房间、椅子和时间段。家长把答案改到每题 1–2 分钟。</p></div>
+        <div class="plan-row"><time>测评前 2–3 天<small>减量</small></time><p>停止新内容，只读喜欢的书、画画。确认设备、材料、网络。告诉孩子“要和一位新老师在电脑上玩”，不要说“考试”。</p></div>
+        <div class="plan-row"><time>当天<small>状态最重要</small></time><p>选孩子睡饱、吃饱、心情好的时段。提前 15 分钟上线测试。结束后不追问“答得怎么样”，夸孩子“你和老师聊得很开心”。</p></div>
+      </div>
+      <div class="caveat">只有一次测评机会，结果不公布，没发挥好也不会重约。所以计划的重点是“当天状态稳定”，不是“会的越多越好”。</div>
+    </section>
+
+    <!-- 01 CARDS -->
+    <section id="cards">
+      <div class="sec-head"><span class="sec-no">01</span><h2>孩子题卡：随机抽问</h2></div>
+      <p class="intro">按官方列出的活动范围整理。点“朗读”用正常语速读题，让孩子习惯听不同的声音。家长看提示，但别直接给答案。</p>
+      <div class="note"><strong>目标：</strong>用完整句子回答，最好加一个 <span class="en">because…</span>。听不懂时会说 <span class="en">“Can you say that again, please?”</span>，而不是不说话或看爸妈。</div>
+
+      <div class="chip-row" id="cat-chips" role="group" aria-label="题目类别"></div>
+
+      <div class="fc-shell" style="margin-top:16px">
+        <article class="fc" aria-live="polite">
+          <span class="cat" id="fc-cat"></span>
+          <div class="q en" id="fc-q"></div>
+          <div class="zh" id="fc-zh"></div>
+          <div class="hint" id="fc-hint"></div>
+          <div class="actions">
+            <button class="btn" type="button" id="fc-next">下一题</button>
+            <button class="btn ghost" type="button" id="fc-say">🔊 朗读</button>
+            <button class="btn ghost" type="button" id="fc-tip">看提示</button>
+            <span class="count" id="fc-count"></span>
+          </div>
+        </article>
+        <aside class="card side">
+          <h3>家长怎么带</h3>
+          <ul class="clean">
+            <li>孩子只说一个词时，回应 <span class="en">“Tell me more!”</span> 或 <span class="en">“Why do you like it?”</span>，而不是替他说完。</li>
+            <li>孩子说中文时，不批评，用英语把意思重说一遍，再请他自己说。</li>
+            <li>每次只抽 5–8 题，停在孩子还想玩的时候。</li>
+            <li>答案不需要“标准”，真实最好。别让孩子背一段自我介绍。</li>
+          </ul>
+          <div class="rate-row">
+            朗读语速
+            <select id="rate">
+              <option value="1">正常（推荐）</option>
+              <option value="0.85">稍慢（仅头几天）</option>
+            </select>
+          </div>
+        </aside>
+      </div>
+
+      <div class="qlist" id="qlist" aria-label="全部题目"></div>
+      <div class="caveat">这些是按官方活动范围写的“同类题”，不是 BISV 原题。实际问法会不同，所以重点练理解和表达，不要背。</div>
+    </section>
+
+    <!-- 02 PICTURE -->
+    <section id="picture">
+      <div class="sec-head"><span class="sec-no">02</span><h2>看图说话</h2></div>
+      <p class="intro">官方提到会“看图并说出观察到的内容”。先让孩子自己随便说，再按下面的顺序问：看到什么 → 数一数 → 在做什么 → 感受 → 接下来会怎样。</p>
+      <div class="scene-wrap">
+        <div class="scene" aria-label="公园场景图">
+          <svg viewBox="0 0 600 400" role="img" aria-label="A park with a girl holding a red balloon, a boy on a swing, a dog, a tree with an apple, birds and a pond with ducks">
+            <rect width="600" height="400" fill="#cfeeff"/>
+            <rect y="270" width="600" height="130" fill="#9bd77a"/>
+            <circle cx="520" cy="70" r="38" fill="#ffd23f"/>
+            <g stroke="#ffd23f" stroke-width="5" stroke-linecap="round">
+              <line x1="520" y1="12" x2="520" y2="22"/><line x1="462" y1="70" x2="472" y2="70"/><line x1="478" y1="28" x2="485" y2="35"/><line x1="478" y1="112" x2="485" y2="105"/>
+            </g>
+            <g fill="#fff"><ellipse cx="140" cy="70" rx="48" ry="20"/><ellipse cx="175" cy="58" rx="34" ry="20"/><ellipse cx="330" cy="50" rx="38" ry="16"/></g>
+            <g fill="none" stroke="#333" stroke-width="3" stroke-linecap="round">
+              <path d="M250 100 q8 -8 16 0 q8 -8 16 0"/><path d="M300 125 q7 -7 14 0 q7 -7 14 0"/><path d="M360 95 q7 -7 14 0 q7 -7 14 0"/>
+            </g>
+            <rect x="72" y="180" width="24" height="110" fill="#8b5a2b"/>
+            <circle cx="84" cy="160" r="62" fill="#3f9c4a"/>
+            <circle cx="112" cy="170" r="9" fill="#e23b2e"/>
+            <g stroke="#6b4b2a" stroke-width="6"><line x1="200" y1="160" x2="200" y2="300"/><line x1="300" y1="160" x2="300" y2="300"/><line x1="195" y1="160" x2="305" y2="160"/></g>
+            <g stroke="#555" stroke-width="2"><line x1="232" y1="160" x2="236" y2="252"/><line x1="268" y1="160" x2="264" y2="252"/></g>
+            <rect x="226" y="250" width="48" height="8" fill="#6b4b2a"/>
+            <circle cx="250" cy="215" r="14" fill="#f2c9a0"/>
+            <rect x="238" y="228" width="24" height="24" rx="5" fill="#2f6fde"/>
+            <path d="M244 210 q6 5 12 0" stroke="#333" stroke-width="2" fill="none"/>
+            <ellipse cx="470" cy="330" rx="100" ry="34" fill="#5cb8e6"/>
+            <g><ellipse cx="440" cy="325" rx="16" ry="10" fill="#ffe14d"/><circle cx="452" cy="315" r="7" fill="#ffe14d"/><polygon points="458,315 466,317 458,319" fill="#f08a24"/></g>
+            <g><ellipse cx="500" cy="338" rx="16" ry="10" fill="#ffe14d"/><circle cx="512" cy="328" r="7" fill="#ffe14d"/><polygon points="518,328 526,330 518,332" fill="#f08a24"/></g>
+            <line x1="378" y1="175" x2="372" y2="250" stroke="#555" stroke-width="2"/>
+            <ellipse cx="378" cy="160" rx="22" ry="27" fill="#e23b2e"/>
+            <circle cx="370" cy="270" r="14" fill="#f2c9a0"/>
+            <path d="M364 266 a3 3 0 0 0 0 .1 M376 266 a3 3 0 0 0 0 .1" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+            <path d="M364 275 q6 5 12 0" stroke="#333" stroke-width="2" fill="none"/>
+            <polygon points="352,330 388,330 380,283 360,283" fill="#b45fd1"/>
+            <line x1="362" y1="330" x2="362" y2="352" stroke="#333" stroke-width="4"/><line x1="378" y1="330" x2="378" y2="352" stroke="#333" stroke-width="4"/>
+            <ellipse cx="300" cy="345" rx="30" ry="14" fill="#a8723c"/>
+            <circle cx="330" cy="332" r="12" fill="#a8723c"/>
+            <ellipse cx="336" cy="326" rx="4" ry="8" fill="#6d4523"/>
+            <path d="M270 340 q-12 -14 -6 -22" stroke="#a8723c" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <g stroke="#a8723c" stroke-width="5"><line x1="285" y1="355" x2="285" y2="372"/><line x1="315" y1="355" x2="315" y2="372"/></g>
+            <g><circle cx="150" cy="345" r="6" fill="#ff6fa5"/><circle cx="170" cy="358" r="6" fill="#fff"/><circle cx="130" cy="362" r="6" fill="#ffd23f"/></g>
+          </svg>
+        </div>
+        <div class="card scene-q">
+          <h3>按顺序问</h3>
+          <ol id="scene-list"></ol>
+          <p class="avoid" style="margin-top:12px">好的回答示例：<span class="en">“I see a girl. She has a red balloon. She is happy because she is at the park.”</span></p>
+        </div>
+      </div>
+      <div class="caveat">练熟这张图后，换家里的绘本、旅行照片、超市广告页，用同样的五步问法。目的是练“看图会说”，不是记住这张图。</div>
+    </section>
+
+    <!-- 03 WORDS & MATH -->
+    <section id="words">
+      <div class="sec-head"><span class="sec-no">03</span><h2>认词 & 数学小游戏</h2></div>
+      <p class="intro">其他 BASIS 校区官方提到会读 sight words、做基础数学。TK 孩子会一部分就够，K 孩子可以多练。点词卡标“认识了”，会自动记在这台设备上。</p>
+
+      <div class="grid2">
+        <div>
+          <h3>Sight Words 闪卡</h3>
+          <div class="chip-row" id="sw-level" role="group" aria-label="词表级别">
+            <button class="chip" type="button" data-level="pre" aria-pressed="true">Pre-K 40 词（TK）</button>
+            <button class="chip" type="button" data-level="k" aria-pressed="false">Kindergarten 52 词（K）</button>
+          </div>
+          <div class="sw-card en" id="sw-card" style="margin-top:14px" aria-live="polite">the</div>
+          <div class="sw-bar">
+            <button class="btn" type="button" id="sw-next">下一个</button>
+            <button class="btn ghost" type="button" id="sw-know">✓ 认识了</button>
+            <button class="btn ghost" type="button" id="sw-say">🔊</button>
+            <label style="font-size:.9rem;color:var(--muted)"><input type="checkbox" id="sw-unknown" checked /> 只抽还不认识的</label>
+            <span class="sw-stats" id="sw-stats"></span>
+          </div>
+          <div class="sw-grid" id="sw-grid" aria-label="全部词，点一下切换认识/不认识"></div>
+          <p class="avoid" style="margin-top:12px">玩法：家长说一个词，孩子在一排卡里拍对的那张；或者在绘本里“找 <span class="en">the</span>”。</p>
+        </div>
+
+        <div>
+          <h3>数学小卡（自动出题）</h3>
+          <div class="chip-row" id="math-types" role="group" aria-label="题型"></div>
+          <div class="math-card" style="margin-top:14px" aria-live="polite">
+            <div class="math-q en" id="math-q"></div>
+            <div class="math-vis" id="math-vis"></div>
+            <div class="math-ans en" id="math-ans"></div>
+            <div class="actions">
+              <button class="btn" type="button" id="math-next">下一题</button>
+              <button class="btn ghost" type="button" id="math-say">🔊 朗读</button>
+              <button class="btn ghost" type="button" id="math-show">看答案</button>
+              <select id="math-max" aria-label="数字范围">
+                <option value="10">10 以内（TK）</option>
+                <option value="20">20 以内（K）</option>
+              </select>
+            </div>
+          </div>
+          <p class="avoid" style="margin-top:12px">鼓励孩子用手指点着数，说出 <span class="en">“There are seven.”</span>。比大小时说 <span class="en">“Eight is bigger than three.”</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 MOCK -->
+    <section id="mock">
+      <div class="sec-head"><span class="sec-no">04</span><h2>模拟 Zoom：30 分钟流程</h2></div>
+      <p class="intro">照正式形式来：Zoom 一对一、孩子坐桌前椅子上、家长在镜头外不出声。最好请爷爷奶奶以外、孩子不太熟的大人当“老师”。</p>
+      <div class="timer">
+        <output id="mock-clock">30:00</output>
+        <button class="btn" type="button" id="mock-start">开始计时</button>
+        <button class="btn ghost" type="button" id="mock-reset">重置</button>
+        <span style="color:var(--muted);font-size:.9rem" id="mock-stage"></span>
+      </div>
+      <div class="mock" id="mock-rows"></div>
+
+      <div class="grid2" style="margin-top:24px">
+        <div class="card">
+          <h3>桌面摆好</h3>
+          <ul class="clean">
+            <li>一幅孩子近期的画</li>
+            <li>几张白纸</li>
+            <li>蜡笔 / 彩铅 / 马克笔 / 铅笔</li>
+            <li>一本最喜欢的书</li>
+          </ul>
+          <p class="tagline" style="margin-top:12px">官方要求</p>
+        </div>
+        <div class="card">
+          <h3>模拟后记下来</h3>
+          <ul class="clean">
+            <li>哪一类问题孩子愣住了？</li>
+            <li>有没有转头看家长？</li>
+            <li>多久开始坐不住？</li>
+            <li>听不懂时，会不会开口要求重复？</li>
+          </ul>
+          <p class="tagline" style="margin-top:12px">写进 06 进度追踪</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 PARENT -->
+    <section id="parent">
+      <div class="sec-head"><span class="sec-no">05</span><h2>家长面谈：三道官方题</h2></div>
+      <p class="intro">Zoom 约 30 分钟，至少一位家长参加，TK–G1 孩子不用参加。下面每题给一个答题框架、一个示例（方括号里换成你家的真实内容），和一个写草稿的地方。草稿只存在这台设备的浏览器里。</p>
+
+      <div id="parent-qs"></div>
+
+      <h3 style="margin-top:34px">可能的追问（通用参考，非官方）</h3>
+      <p class="intro" style="margin-bottom:12px">没有找到可验证的 BISV 家长实测追问。下面是湾区私校常见话题，能顺带想一想即可，不用每题写稿。</p>
+      <div class="follow" id="follow"></div>
+
+      <div class="grid2" style="margin-top:24px">
+        <div class="card">
+          <h3>可以反问学校的问题</h3>
+          <ul class="clean" id="ask-school"></ul>
+        </div>
+        <div class="card">
+          <h3>答题小规则</h3>
+          <ul class="clean">
+            <li>每题 1–2 分钟，先给结论，再讲一个具体小故事。</li>
+            <li>两位家长都参加时，提前对一下口径，别互相矛盾。</li>
+            <li>讲孩子真实的样子，包括还在成长的地方。</li>
+            <li>不要贬低现在的学校或别的学校。</li>
+            <li>准备好 1–2 个真心想问的问题。</li>
+            <li>用和平时说话一样的语气，不念稿。</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ta-bar" style="margin-top:16px">
+        <button class="btn" type="button" id="copy-drafts">复制全部草稿</button>
+        <button class="btn ghost" type="button" id="clear-drafts">清空草稿</button>
+        <span id="draft-status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <!-- 06 TRACK -->
+    <section id="track">
+      <div class="sec-head"><span class="sec-no">06</span><h2>进度追踪 & 当天清单</h2></div>
+      <p class="intro">每周模拟后更新一次。标“还不会”的项目，就是下周每天要玩的内容。记录存在这台设备上。</p>
+      <div class="grid2">
+        <div>
+          <h3>孩子能力</h3>
+          <div class="tracker" id="tracker"></div>
+        </div>
+        <div>
+          <h3>测评当天清单</h3>
+          <ul class="checklist" id="dayof"></ul>
+          <h3 style="margin-top:26px">家长面谈当天</h3>
+          <ul class="checklist" id="dayof-parent"></ul>
+        </div>
+      </div>
+      <div class="caveat">2027–28 周期 Play Date 是否仍然只有线上，以及硅谷校区完整日期，请以申请门户或最新招生页为准。Lower School 招生：svl.admissions@basisindependent.com，(408) 638-6518。</div>
+    </section>
+  </main>
+
+  <footer class="footer">根据《湾区 BASIS 面试题》整理 · 练习题为同类题，不是学校原题 · 制作于 2026-10-14</footer>
+
+  <script>
+  (function () {
+    // ---------- storage helpers ----------
+    var KEY = 'basis-practice-v1';
+    var store = {};
+    try { store = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch (e) { store = {}; }
+    function save() { try { localStorage.setItem(KEY, JSON.stringify(store)); } catch (e) {} }
+    function $(id) { return document.getElementById(id); }
+    function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+    function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; } return a; }
+    function rnd(min, max) { return min + Math.floor(Math.random() * (max - min + 1)); }
+
+    // ---------- countdown ----------
+    try {
+      var d = Math.ceil((new Date('2026-11-18T23:59:59') - new Date()) / 86400000);
+      $('days-left').textContent = d > 0 ? d + ' 天' : '已过（请看 Regular 截止 2027-02-12）';
+    } catch (e) {}
+
+    // ---------- speech ----------
+    function speak(text) {
+      if (!('speechSynthesis' in window)) { alert('这个浏览器不支持朗读，请家长自己用正常语速读。'); return; }
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      u.rate = parseFloat($('rate').value) || 1;
+      var vs = speechSynthesis.getVoices().filter(function (v) { return /^en(-|_)US/i.test(v.lang); });
+      if (vs.length) u.voice = vs[Math.floor(Math.random() * vs.length)];
+      speechSynthesis.speak(u);
+    }
+    if ('speechSynthesis' in window) speechSynthesis.getVoices();
+
+    // ---------- question bank ----------
+    var CATS = [
+      { id: 'me', name: '关于自己', src: '官方确认' },
+      { id: 'book', name: '最喜欢的书 / 玩具', src: '官方确认' },
+      { id: 'basic', name: '颜色 & 数字', src: '官方确认' },
+      { id: 'listen', name: '听指令', src: '英语门槛延伸' },
+      { id: 'draw', name: '画画', src: '官方活动' },
+      { id: 'social', name: '打招呼 & 求助', src: '社交情绪' }
+    ];
+    var Q = [
+      ['me', "What's your name?", '你叫什么名字？', 'My name is ___.', '说全名，看着镜头。'],
+      ['me', 'How old are you?', '你几岁？', "I'm four. / I'm five years old.", '可以伸手指，但要说出来。'],
+      ['me', 'Who is in your family?', '家里有谁？', 'I have a mom, a dad, and a baby brother.', '能说出 3 个人以上更好。'],
+      ['me', 'What do you like to do for fun?', '你喜欢玩什么？', 'I like to build with LEGO because I can make a tower.', '练习加 because。'],
+      ['me', "What's your favorite animal? Why?", '最喜欢什么动物？为什么？', 'I like penguins because they can swim.', '“Why” 问题是重点。'],
+      ['me', "What's your favorite food?", '最喜欢吃什么？', 'My favorite food is noodles.', ''],
+      ['me', 'What did you do last weekend?', '上周末做了什么？', 'I went to the park with my dad.', '过去式说错没关系，能讲出事情就好。'],
+      ['me', 'Do you have a best friend? What do you play together?', '有好朋友吗？一起玩什么？', 'Yes, Emma. We play tag.', ''],
+      ['me', 'What do you want to be when you grow up?', '长大想做什么？', 'I want to be a doctor because I want to help people.', ''],
+      ['me', 'Tell me about your school.', '说说你的学校。', 'I go to ___ school. I like the playground.', ''],
+      ['book', 'Can you show me your favorite book?', '给我看看你最喜欢的书。', 'This is my favorite book. It is called ___.', '提前练习举书给镜头看。'],
+      ['book', 'What is this book about?', '这本书讲什么？', 'It is about a caterpillar. He eats a lot of food.', '能说 2–3 句就很好。'],
+      ['book', 'Who is your favorite character? Why?', '最喜欢书里哪个角色？', 'I like the bear because he is funny.', ''],
+      ['book', 'What is your favorite part of the story?', '最喜欢哪一段？', 'I like when the caterpillar becomes a butterfly.', ''],
+      ['book', 'What do you think will happen next?', '你觉得接下来会怎样？', 'I think he will go home.', '没有标准答案，敢猜最重要。'],
+      ['book', 'Can you point to the title?', '指一下书名在哪。', '（指着封面上的书名）', '认识书的封面、书名、作者。'],
+      ['book', 'Tell me about your favorite toy.', '说说你最喜欢的玩具。', 'My favorite toy is a dinosaur. It is green and big.', '可以拿到镜头前。'],
+      ['basic', 'What color is this?', '这是什么颜色？（拿一个东西）', "It's purple.", '基本色加 pink, purple, brown, gray, orange。'],
+      ['basic', 'Can you find something blue in your room?', '找一个蓝色的东西给我看。', '（拿来）This is blue!', '练习离开椅子再回来，然后坐好。'],
+      ['basic', 'Can you count to 20 for me?', '数到 20。', '1, 2, 3 … 20', 'K 孩子可以试着数到 30、50。'],
+      ['basic', 'Can you count backwards from 10?', '从 10 倒数。', '10, 9, 8 … 1, blast off!', ''],
+      ['basic', 'What number is this?', '这是几？（写一个数字）', "It's seven.", '容易混的：6/9, 12/21, 13/30。'],
+      ['basic', 'How many fingers am I holding up?', '我举了几根手指？', 'Four!', ''],
+      ['basic', 'Which number is bigger, 3 or 8?', '3 和 8 哪个大？', 'Eight is bigger.', ''],
+      ['basic', 'What shape is this?', '这是什么形状？', "It's a triangle.", 'circle, square, triangle, rectangle, star, heart, oval。'],
+      ['basic', 'What letter does "cat" start with?', 'cat 是哪个字母开头？', 'C!', 'K 孩子适用。'],
+      ['listen', 'Touch your nose, then clap two times.', '摸鼻子，然后拍手两下。', '（照做）', '两步指令，听完再做。'],
+      ['listen', 'Put your hands on your head and stand up.', '手放头上，站起来。', '（照做）', ''],
+      ['listen', 'Show me something soft.', '给我看一个软的东西。', '（拿来）This is my pillow. It is soft.', ''],
+      ['listen', 'Hold up your crayon. Now put it under the paper.', '举起蜡笔，再放到纸下面。', '（照做）', '练习 on / under / next to / behind。'],
+      ['listen', 'Can you tell me one thing you did this morning?', '说一件今天早上做的事。', 'I ate breakfast.', ''],
+      ['draw', 'Can you tell me about your drawing?', '说说你的画。', 'This is my family at the beach. This is me.', '提前准备一幅近期的画。'],
+      ['draw', 'Can you draw a circle, a square, and a triangle?', '画圆形、正方形、三角形。', '（画出来）', ''],
+      ['draw', 'Draw a sun in the corner, then a tree under it.', '在角上画太阳，再在下面画树。', '（照做）', '画画 + 听指令。'],
+      ['draw', 'Draw your favorite animal. What is it doing?', '画你最喜欢的动物，它在做什么？', 'This is a cat. It is sleeping.', '边画边说。'],
+      ['draw', 'Can you write your name?', '能写你的名字吗？', '（写名字）', 'K 孩子适用；TK 会写第一个字母也行。'],
+      ['draw', 'What colors did you use?', '你用了什么颜色？', 'I used red, yellow, and green.', ''],
+      ['social', 'Hi! How are you today?', '你好！今天怎么样？', "I'm good. How are you?", '练习反问，很加分。'],
+      ['social', '(说一句很长、孩子听不懂的话)', '故意说难一点', 'Can you say that again, please?', '听不懂时开口问，比沉默好得多。'],
+      ['social', "I don't know this one. Do you?", '遇到不会的题', "I'm not sure. I think it's ___.", '允许说 “I don\'t know”，然后继续。'],
+      ['social', 'Thank you for playing with me today!', '结束时', 'Thank you! Bye-bye!', '挥手说再见。']
+    ];
+
+    var activeCats = {};
+    CATS.forEach(function (c) { activeCats[c.id] = true; });
+    var chipsHtml = CATS.map(function (c) {
+      return '<button class="chip" type="button" data-cat="' + c.id + '" aria-pressed="true">' + c.name + '</button>';
+    }).join('');
+    $('cat-chips').innerHTML = chipsHtml;
+
+    var deck = [], pos = 0, current = null;
+    function buildDeck() {
+      deck = shuffle(Q.filter(function (q) { return activeCats[q[0]]; }));
+      pos = 0;
+    }
+    function catName(id) { for (var i = 0; i < CATS.length; i++) if (CATS[i].id === id) return CATS[i]; return {}; }
+    function showCard() {
+      if (!deck.length) { $('fc-q').textContent = '请至少选一个类别'; $('fc-zh').textContent = ''; $('fc-cat').textContent = ''; $('fc-count').textContent = ''; return; }
+      if (pos >= deck.length) buildDeck();
+      current = deck[pos];
+      var c = catName(current[0]);
+      $('fc-cat').textContent = c.name + ' · ' + c.src;
+      $('fc-q').textContent = current[1];
+      $('fc-zh').textContent = current[2];
+      var h = $('fc-hint');
+      h.classList.remove('show');
+      h.innerHTML = '<p><b>参考说法：</b><span class="en">' + esc(current[3]) + '</span></p>' + (current[4] ? '<p>' + esc(current[4]) + '</p>' : '');
+      $('fc-tip').textContent = '看提示';
+      $('fc-count').textContent = (pos + 1) + ' / ' + deck.length;
+    }
+    $('cat-chips').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-cat]'); if (!b) return;
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', on);
+      activeCats[b.dataset.cat] = on;
+      buildDeck(); showCard();
+    });
+    $('fc-next').addEventListener('click', function () { pos++; showCard(); });
+    $('fc-say').addEventListener('click', function () { if (current && current[1].charAt(0) !== '(') speak(current[1]); });
+    $('fc-tip').addEventListener('click', function () {
+      var h = $('fc-hint'); var s = h.classList.toggle('show');
+      this.textContent = s ? '收起提示' : '看提示';
+    });
+    buildDeck(); showCard();
+
+    // full list
+    $('qlist').innerHTML = CATS.map(function (c) {
+      var rows = Q.filter(function (q) { return q[0] === c.id; }).map(function (q) {
+        return '<tr><td class="en">' + esc(q[1]) + '<br><small style="color:var(--muted);font-family:IBM Plex Sans,sans-serif;font-weight:500">' + esc(q[2]) + '</small></td><td><span class="en">' + esc(q[3]) + '</span>' + (q[4] ? '<br>' + esc(q[4]) : '') + '</td></tr>';
+      }).join('');
+      return '<details><summary>' + c.name + '<span>' + c.src + ' · ' + Q.filter(function (q) { return q[0] === c.id; }).length + ' 题</span></summary><table>' + rows + '</table></details>';
+    }).join('');
+
+    // ---------- picture talk ----------
+    var SCENE = [
+      ['What do you see in this picture?', '图里有什么？先让孩子自由说'],
+      ['How many birds are in the sky?', '天上有几只鸟？（3）'],
+      ['How many ducks are in the water?', '水里有几只鸭子？（2）'],
+      ['What color is the balloon?', '气球是什么颜色？（红色）'],
+      ['What is the boy doing?', '男孩在做什么？（荡秋千）'],
+      ['How does the girl feel? Why?', '女孩是什么心情？为什么？'],
+      ['What is the weather like today?', '今天天气怎么样？（晴天）'],
+      ['Where is the apple?', '苹果在哪里？（在树上）'],
+      ['What do you think the dog will do next?', '小狗接下来会做什么？'],
+      ['Would you like to go to this park? What would you do?', '你想去这个公园吗？会做什么？']
+    ];
+    $('scene-list').innerHTML = SCENE.map(function (s, i) {
+      return '<li><span class="en">' + esc(s[0]) + '</span><button class="speak" type="button" data-i="' + i + '" aria-label="朗读">🔊</button><span class="zh">' + esc(s[1]) + '</span></li>';
+    }).join('');
+    $('scene-list').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-i]'); if (b) speak(SCENE[+b.dataset.i][0]);
+    });
+
+    // ---------- sight words ----------
+    var SW = {
+      pre: 'a and away big blue can come down find for funny go help here I in is it jump little look make me my not one play red run said see the three to two up we where yellow you'.split(' '),
+      k: 'all am are at ate be black brown but came did do eat four get good have he into like must new no now on our out please pretty ran ride saw say she so soon that there they this too under want was well went what white who will with yes'.split(' ')
+    };
+    var known = store.known || {};
+    var level = store.swLevel || 'pre';
+    var swCur = 'the';
+    function swList() { return SW[level]; }
+    function swRender() {
+      var list = swList();
+      var n = list.filter(function (w) { return known[w]; }).length;
+      $('sw-stats').textContent = '已认识 ' + n + ' / ' + list.length;
+      $('sw-grid').innerHTML = list.map(function (w) {
+        return '<button type="button" data-w="' + w + '" class="' + (known[w] ? 'known' : '') + '">' + w + '</button>';
+      }).join('');
+      Array.prototype.forEach.call($('sw-level').children, function (b) { b.setAttribute('aria-pressed', b.dataset.level === level); });
+    }
+    function swNext() {
+      var list = swList();
+      var pool = $('sw-unknown').checked ? list.filter(function (w) { return !known[w]; }) : list;
+      if (!pool.length) { $('sw-card').textContent = '🎉'; swCur = null; return; }
+      var w; do { w = pool[Math.floor(Math.random() * pool.length)]; } while (pool.length > 1 && w === swCur);
+      swCur = w; $('sw-card').textContent = w;
+    }
+    $('sw-next').addEventListener('click', swNext);
+    $('sw-know').addEventListener('click', function () { if (!swCur) return; known[swCur] = true; store.known = known; save(); swRender(); swNext(); });
+    $('sw-say').addEventListener('click', function () { if (swCur) speak(swCur); });
+    $('sw-grid').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-w]'); if (!b) return;
+      var w = b.dataset.w; if (known[w]) delete known[w]; else known[w] = true;
+      store.known = known; save(); swRender();
+    });
+    $('sw-level').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-level]'); if (!b) return;
+      level = b.dataset.level; store.swLevel = level; save(); swRender(); swNext();
+    });
+    swRender(); swNext();
+
+    // ---------- math ----------
+    var EMO = ['🍎', '⭐', '🐟', '🚗', '🐶', '🎈', '🍪', '🦋', '🌸', '⚽'];
+    var NUMW = ['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty'];
+    var EN_NAME = { '🍎': 'apples', '⭐': 'stars', '🐟': 'fish', '🚗': 'cars', '🐶': 'dogs', '🎈': 'balloons', '🍪': 'cookies', '🦋': 'butterflies', '🌸': 'flowers', '⚽': 'balls' };
+    var MT = [
+      { id: 'count', name: '数一数' },
+      { id: 'num', name: '认数字' },
+      { id: 'compare', name: '比多少' },
+      { id: 'more', name: '多一个 / 少一个' },
+      { id: 'add', name: '加法' },
+      { id: 'sub', name: '减法' },
+      { id: 'pattern', name: '找规律' }
+    ];
+    var mOn = {}; MT.forEach(function (t) { mOn[t.id] = true; });
+    $('math-types').innerHTML = MT.map(function (t) { return '<button class="chip" type="button" data-mt="' + t.id + '" aria-pressed="true">' + t.name + '</button>'; }).join('');
+    $('math-types').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-mt]'); if (!b) return;
+      var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); mOn[b.dataset.mt] = on; mathNext();
+    });
+    function rep(e, n) { return new Array(n + 1).join(e); }
+    var mCur = { q: '' };
+    function mathNext() {
+      var types = MT.filter(function (t) { return mOn[t.id]; });
+      if (!types.length) { $('math-q').textContent = '请至少选一个题型'; $('math-vis').innerHTML = ''; $('math-ans').textContent = ''; return; }
+      var t = types[Math.floor(Math.random() * types.length)].id;
+      var max = +$('math-max').value;
+      var e = EMO[Math.floor(Math.random() * EMO.length)], nm = EN_NAME[e];
+      var q, vis, ans;
+      if (t === 'count') {
+        var n = rnd(2, Math.min(max, 15));
+        q = 'How many ' + nm + ' are there?'; vis = rep(e, n); ans = 'There are ' + NUMW[n] + '. (' + n + ')';
+      } else if (t === 'num') {
+        var n2 = rnd(0, max);
+        q = 'What number is this?'; vis = '<span class="big">' + n2 + '</span>'; ans = "It's " + NUMW[n2] + '.';
+      } else if (t === 'compare') {
+        var a = rnd(1, 9), b; do { b = rnd(1, 9); } while (b === a);
+        var e2 = EMO[(EMO.indexOf(e) + 3) % EMO.length];
+        q = 'Which group has more?'; vis = '<span class="grp">' + rep(e, a) + '</span><span class="grp">' + rep(e2, b) + '</span>';
+        ans = (a > b ? 'The ' + nm : 'The ' + EN_NAME[e2]) + ' group has more. ' + Math.max(a, b) + ' is more than ' + Math.min(a, b) + '.';
+      } else if (t === 'more') {
+        var n3 = rnd(1, max - 1), up = Math.random() < .5;
+        q = 'What number is one ' + (up ? 'more' : 'less') + ' than ' + n3 + '?'; vis = '<span class="big">' + n3 + '</span> ' + (up ? '➕ 1' : '➖ 1');
+        ans = up ? String(n3 + 1) : String(n3 - 1);
+      } else if (t === 'add') {
+        var x = rnd(1, Math.min(5, max - 1)), y = rnd(1, Math.min(5, max - x));
+        q = 'I have ' + x + ' ' + nm + '. I get ' + y + ' more. How many now?';
+        vis = '<span class="grp">' + rep(e, x) + '</span> + <span class="grp">' + rep(e, y) + '</span>';
+        ans = x + ' + ' + y + ' = ' + (x + y);
+      } else if (t === 'sub') {
+        var p = rnd(3, Math.min(10, max)), m = rnd(1, p - 1);
+        q = 'There are ' + p + ' ' + nm + '. ' + m + ' go away. How many are left?';
+        vis = rep(e, p - m) + '<span style="opacity:.25">' + rep(e, m) + '</span>';
+        ans = p + ' − ' + m + ' = ' + (p - m);
+      } else {
+        var pats = [['🔴', '🔵'], ['⭐', '🌙'], ['🍎', '🍎', '🍌'], ['🐶', '🐱', '🐭'], ['🟩', '🟨', '🟨']];
+        var pt = pats[Math.floor(Math.random() * pats.length)], seq = [];
+        var len = pt.length * 2 + rnd(0, pt.length - 1);
+        for (var i = 0; i < len; i++) seq.push(pt[i % pt.length]);
+        q = 'What comes next?'; vis = seq.join(' ') + ' ❓'; ans = pt[len % pt.length];
+      }
+      mCur = { q: q };
+      $('math-q').textContent = q; $('math-vis').innerHTML = vis;
+      var a1 = $('math-ans'); a1.textContent = ans; a1.classList.remove('show');
+      $('math-show').textContent = '看答案';
+    }
+    $('math-next').addEventListener('click', mathNext);
+    $('math-max').addEventListener('change', mathNext);
+    $('math-say').addEventListener('click', function () { speak(mCur.q); });
+    $('math-show').addEventListener('click', function () { var s = $('math-ans').classList.toggle('show'); this.textContent = s ? '收起答案' : '看答案'; });
+    mathNext();
+
+    // ---------- mock run sheet ----------
+    var MOCK = [
+      [0, 3, '打招呼', 'Hi! What\'s your name? How are you today?', '看镜头、说完整名字。家长此时离开镜头。'],
+      [3, 8, '关于自己', 'How old are you? Who is in your family? What do you like to do?', '从题卡“关于自己”随机抽 3–4 题。'],
+      [8, 13, '最喜欢的书', 'Can you show me your favorite book? What happens in the story?', '孩子举书、翻一页讲。'],
+      [13, 18, '颜色 / 数字 / 看图', 'What color is this? Count to 20. What do you see in this picture?', '用 02 的图，或屏幕共享一张新图。'],
+      [18, 23, '认词 & 数学', 'Can you read this word? How many stars are there?', '屏幕共享 03 的卡片，抽 3–5 个。'],
+      [23, 28, '画画 & 听指令', 'Tell me about your drawing. Now draw a sun in the corner…', '先展示近期画作，再现场画一张。'],
+      [28, 30, '说再见', 'Thank you for playing with me! Bye-bye!', '挥手、说谢谢。结束后家长只夸，不复盘。']
+    ];
+    $('mock-rows').innerHTML = MOCK.map(function (m, i) {
+      return '<div class="mock-row" data-row="' + i + '"><time>' + m[0] + '–' + m[1] + ' 分钟</time><div><b>' + m[2] + '</b></div><div><span class="en">' + esc(m[3]) + '</span><p>' + esc(m[4]) + '</p></div></div>';
+    }).join('');
+    var mLeft = 1800, mTimer = null;
+    function mDraw() {
+      var mm = Math.floor(mLeft / 60), ss = mLeft % 60;
+      $('mock-clock').textContent = (mm < 10 ? '0' : '') + mm + ':' + (ss < 10 ? '0' : '') + ss;
+      var el = (1800 - mLeft) / 60, stage = '';
+      MOCK.forEach(function (m, i) {
+        var on = mTimer && el >= m[0] && el < m[1];
+        var r = document.querySelector('[data-row="' + i + '"]');
+        r.style.background = on ? 'var(--accent-soft)' : '';
+        if (on) stage = '现在：' + m[2];
+      });
+      $('mock-stage').textContent = stage;
+    }
+    $('mock-start').addEventListener('click', function () {
+      if (mTimer) { clearInterval(mTimer); mTimer = null; this.textContent = '继续'; mDraw(); return; }
+      this.textContent = '暂停';
+      mTimer = setInterval(function () { mLeft = Math.max(0, mLeft - 1); mDraw(); if (!mLeft) { clearInterval(mTimer); mTimer = null; $('mock-stage').textContent = '时间到 🎉'; } }, 1000);
+      mDraw();
+    });
+    $('mock-reset').addEventListener('click', function () { clearInterval(mTimer); mTimer = null; mLeft = 1800; $('mock-start').textContent = '开始计时'; mDraw(); });
+    mDraw();
+
+    // ---------- parent questions ----------
+    var PQ = [
+      {
+        id: 'why', title: '为什么对 BISV 感兴趣？', en: 'Why are you interested in BASIS Independent Silicon Valley?',
+        frame: [['学校的一个具体点', '说明会、参观、官网上你亲眼看到、真心认同的 1–2 点'], ['孩子的一个具体特点', '为什么这个点适合你的孩子'], ['家庭的期望', '你们希望孩子在这里得到什么']],
+        ex: '我们参加了 [说明会/参观]，印象最深的是 [具体内容，如：低年级的课堂方式、老师怎么带孩子提问]。[孩子名] 平时很喜欢 [具体行为，如：追着问“为什么”、自己琢磨拼图]，我们觉得这种环境能让她的好奇心被接住。我们也希望她在 [一个方向] 上有更多挑战，同时保持对学习的兴趣。',
+        avoid: '只说“排名高、升学好”；罗列学校卖点却不连到孩子；说得像背的官网介绍。'
+      },
+      {
+        id: 'interest', title: '孩子有哪些学术和非学术兴趣？', en: 'What are your child\'s academic and non-academic interests?',
+        frame: [['学术兴趣 1 个', '如数字、字母、科学、读书'], ['非学术兴趣 1 个', '如画画、运动、音乐、搭建'], ['各配一个小故事', '最近一次孩子主动做这件事的具体场景']],
+        ex: '学术上，她最近对数字特别着迷，[具体例子：在超市自己数一共几样东西，还会问“再买两个是几个”]。非学术上，她很喜欢画画，[具体例子：每天放学都要画当天发生的事，还会讲给我们听]。',
+        avoid: '列一长串兴趣班；说“什么都喜欢”；只讲成绩不讲孩子。'
+      },
+      {
+        id: 'free', title: '孩子空闲时喜欢做什么？', en: 'What does your child like to do in their free time?',
+        frame: [['自然状态下的选择', '没人安排时，孩子自己会去做什么'], ['一个画面', '时间、地点、孩子在做什么'], ['你看到的特点', '这说明孩子是什么样的人']],
+        ex: '周末没有安排的时候，他最常做的是 [具体活动，如：用积木搭“城市”，一搭就是半小时]。搭好后会拉着我们介绍每栋楼是做什么的。我们觉得他是一个专注、喜欢动手、也爱分享的孩子。',
+        avoid: '把兴趣班当空闲时间；说得过于“完美”；和上一题完全重复。'
+      }
+    ];
+    var drafts = store.drafts || {};
+    $('parent-qs').innerHTML = PQ.map(function (p) {
+      return '<article class="pq"><span class="flag off">官方预告</span><h3>' + p.title + '</h3><p class="en-q">' + esc(p.en) + '</p>' +
+        '<div class="frame">' + p.frame.map(function (f, i) { return '<div><b>' + (i + 1) + '. ' + f[0] + '</b>' + f[1] + '</div>'; }).join('') + '</div>' +
+        '<div class="example"><b>示例（换成你家的真实内容）</b><p>' + esc(p.ex) + '</p></div>' +
+        '<p class="avoid"><b>避免：</b>' + esc(p.avoid) + '</p>' +
+        '<label for="ta-' + p.id + '" style="font-weight:700;font-size:.9rem">我的草稿</label>' +
+        '<textarea id="ta-' + p.id + '" data-id="' + p.id + '" placeholder="先写要点，再练习用 1–2 分钟说出来"></textarea>' +
+        '<div class="ta-bar"><span class="chars" data-for="' + p.id + '"></span><button class="btn ghost small" type="button" data-timer="' + p.id + '">练习计时 2 分钟</button><output data-out="' + p.id + '"></output></div></article>';
+    }).join('');
+    function charCount(id) {
+      var v = ($('ta-' + id).value || '').length;
+      document.querySelector('[data-for="' + id + '"]').textContent = v ? v + ' 字（中文约 250–400 字 ≈ 1–2 分钟）' : '';
+    }
+    PQ.forEach(function (p) {
+      var ta = $('ta-' + p.id); ta.value = drafts[p.id] || ''; charCount(p.id);
+      ta.addEventListener('input', function () { drafts[p.id] = ta.value; store.drafts = drafts; save(); charCount(p.id); });
+    });
+    var pTimers = {};
+    $('parent-qs').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-timer]'); if (!b) return;
+      var id = b.dataset.timer, out = document.querySelector('[data-out="' + id + '"]');
+      if (pTimers[id]) { clearInterval(pTimers[id]); pTimers[id] = null; b.textContent = '练习计时 2 分钟'; out.textContent = ''; return; }
+      var left = 120; b.textContent = '停止';
+      out.textContent = '2:00';
+      pTimers[id] = setInterval(function () {
+        left--; out.textContent = Math.floor(left / 60) + ':' + ('0' + left % 60).slice(-2);
+        if (left <= 0) { clearInterval(pTimers[id]); pTimers[id] = null; out.textContent = '时间到，收尾'; b.textContent = '练习计时 2 分钟'; }
+      }, 1000);
+    });
+
+    var FOLLOW = [
+      ['怎么形容你的孩子？', '3 个形容词，每个配一句例子。可以包括一个“还在成长”的地方。'],
+      ['孩子遇到困难或不开心时会怎样？', '讲一次真实经历：孩子怎么反应，你们怎么帮，后来怎样了。'],
+      ['孩子和其他小朋友怎么相处？', '轮流、分享、主动邀请别人玩的具体例子。'],
+      ['你们在家怎么支持孩子学习？', '读书习惯、陪伴方式、给孩子自己探索的空间。避免说“每天刷题”。'],
+      ['BASIS 节奏比较快，你们怎么看？', '表示了解并支持，同时说你们会关注孩子的兴趣和情绪，和老师保持沟通。'],
+      ['孩子现在在哪里上学？为什么考虑换？', '正面讲现在学校的收获，再讲为什么下一阶段想要不同的环境。'],
+      ['孩子的英语环境怎样？', '如实说家里语言和孩子日常英语接触。孩子测评要求英语高于初学者水平。'],
+      ['你们有什么问题想问我们？', '一定要准备 1–2 个，见右下方。']
+    ];
+    $('follow').innerHTML = FOLLOW.map(function (f) { return '<div class="follow-row"><b>' + f[0] + '</b><p>' + f[1] + '</p></div>'; }).join('');
+
+    var ASK = [
+      'TK / K 一天大概怎么安排？玩和学习各占多少？',
+      '如果孩子在某方面学得快或慢，老师会怎么调整？',
+      '低年级班级人数大概多少？',
+      '家长和老师平时怎么沟通？多久一次？',
+      '孩子刚入学时，学校怎么帮他们适应？',
+      '有哪些课后活动或托管？'
+    ];
+    $('ask-school').innerHTML = ASK.map(function (a) { return '<li>' + a + '</li>'; }).join('');
+
+    $('copy-drafts').addEventListener('click', function () {
+      var text = 'BISV 家长面谈草稿\n\n' + PQ.map(function (p) { return '【' + p.title + '】\n' + (drafts[p.id] || '（未写）'); }).join('\n\n');
+      var st = $('draft-status');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { st.textContent = '已复制'; }, function () { st.textContent = '复制失败，请手动选择文字'; });
+      } else { st.textContent = '浏览器不支持一键复制'; }
+    });
+    $('clear-drafts').addEventListener('click', function () {
+      if (!confirm('确定清空三道题的草稿？')) return;
+      drafts = {}; store.drafts = drafts; save();
+      PQ.forEach(function (p) { $('ta-' + p.id).value = ''; charCount(p.id); });
+      $('draft-status').textContent = '已清空';
+    });
+
+    // ---------- tracker ----------
+    var SKILLS = [
+      ['听懂正常语速的英语问题', '不需要放慢或重复'],
+      ['用完整句子介绍自己', '名字、年龄、家人、喜好'],
+      ['回答 “Why” 问题', '会用 because'],
+      ['介绍喜欢的书和玩具', '能说 2–3 句'],
+      ['认颜色（10 种以上）', ''],
+      ['数数 / 认数字', 'TK 到 10–20，K 到 20 以上'],
+      ['看图说话', '会说看到什么、在做什么'],
+      ['Sight words', '见 03 的统计'],
+      ['基础数学', '比多少、加减 5 以内 / 10 以内'],
+      ['边画边说', '能介绍自己的画'],
+      ['听懂两步指令', ''],
+      ['听不懂时开口问', '“Can you say that again, please?”'],
+      ['坐得住 30 分钟', '在桌前椅子上，不乱跑'],
+      ['不看家长、不找家长帮忙', '']
+    ];
+    var tr = store.tracker || {};
+    $('tracker').innerHTML = SKILLS.map(function (s, i) {
+      var v = tr[i];
+      return '<div class="tr-row"><span>' + s[0] + (s[1] ? '<small>' + esc(s[1]) + '</small>' : '') + '</span><span class="seg" data-skill="' + i + '">' +
+        ['还不会', '在练', '稳了'].map(function (l, k) { return '<button type="button" data-v="' + k + '" aria-pressed="' + (v === k) + '">' + l + '</button>'; }).join('') + '</span></div>';
+    }).join('');
+    $('tracker').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-v]'); if (!b) return;
+      var seg = b.parentNode, i = seg.dataset.skill, v = +b.dataset.v;
+      if (tr[i] === v) delete tr[i]; else tr[i] = v;
+      store.tracker = tr; save();
+      Array.prototype.forEach.call(seg.children, function (x) { x.setAttribute('aria-pressed', tr[i] === +x.dataset.v); });
+    });
+
+    function checklist(elId, key, items) {
+      var st = store[key] || {};
+      $(elId).innerHTML = items.map(function (t, i) {
+        return '<li><label><input type="checkbox" data-i="' + i + '"' + (st[i] ? ' checked' : '') + ' /><span>' + t + '</span></label></li>';
+      }).join('');
+      $(elId).addEventListener('change', function (e) {
+        var i = e.target.dataset.i; if (i == null) return;
+        if (e.target.checked) st[i] = true; else delete st[i];
+        store[key] = st; save();
+      });
+    }
+    checklist('dayof', 'dayChild', [
+      '提前 1 天测试 Zoom：摄像头、麦克风、网络、电源',
+      '桌上：近期画作、白纸、画笔、最喜欢的书',
+      '孩子坐在桌前的椅子上，镜头能看到脸和桌面',
+      '安静的房间，关掉电视，宠物和弟妹在别的房间',
+      '孩子睡好、吃好、上过厕所',
+      '提前 15 分钟上线',
+      '家长在镜头外，不提示、不翻译',
+      '结束后只夸，不追问'
+    ]);
+    checklist('dayof-parent', 'dayParent', [
+      '三道官方题的要点卡放手边（只看要点，不念稿）',
+      '2 个想问学校的问题',
+      '两位家长对过口径',
+      '安静、光线好的地方，提前测试设备',
+      '准备好孩子目前学校、年龄等基本信息'
+    ]);
+  })();
+  </script>
+</body>
+</html>
