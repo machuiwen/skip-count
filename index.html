@@ -90,6 +90,13 @@ h1 span{color:var(--c)}
 .opt:hover{transform:translateY(-3px)}
 .opt.wrong{border-color:var(--wrong);color:var(--wrong);opacity:.6;animation:shake .4s}
 .opt.right{background:var(--c);color:#fff}
+.pad{display:grid;grid-template-columns:repeat(5,minmax(0,68px));gap:clamp(6px,2vw,10px);justify-content:center}
+.key{aspect-ratio:1;border-radius:18px;background:#fff;border:3px solid var(--c);color:var(--ink);font-size:clamp(22px,6.5vw,32px);font-weight:800;box-shadow:0 4px 0 rgba(0,0,0,.12)}
+.key:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.12)}
+.pad-controls{margin:16px 0 0}
+.btn:disabled{opacity:.45;cursor:default}
+.ball.typed{background:var(--c);color:#fff;border-style:solid;animation:none}
+.ball.shake{animation:shake .4s}
 .q{font-size:clamp(18px,5vw,24px);font-weight:800;margin:0 0 4px}
 
 .prompt{text-align:center;font-size:clamp(22px,6vw,32px);font-weight:800;margin:0 0 4px}
@@ -166,7 +173,11 @@ h1 span{color:var(--c)}
       <div class="card">
         <p class="q" id="btwQ">What number is in between?</p>
         <div class="seq gap" id="btwSeq"></div>
-        <div class="opts" id="btwOpts"></div>
+        <div class="pad" id="btwPad"></div>
+        <div class="controls pad-controls">
+          <button class="btn ghost" type="button" id="btwDel">⌫ Erase</button>
+          <button class="btn" type="button" id="btwOk">✔ Check</button>
+        </div>
       </div>
       <div class="grid-wrap" id="btwHelp" hidden><div class="grid" id="btwLine"></div></div>
     </div>
@@ -514,62 +525,77 @@ function tapCell(v, el) {
 $('tapAgain').onclick = newTap;
 
 /* ---------- mode 4: what number is in between? ---------- */
-let btwLo = 0, btwLocked = false, btwLineCells = {};
+// typed answer on a number pad (no multiple choice), so guessing does not pay off
+let btwLo = 0, btwLocked = false, btwLineCells = {}, btwInput = '', btwMisses = 0;
+$('btwPad').innerHTML = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(d => `<button class="key" type="button" data-d="${d}">${d}</button>`).join('');
+$('btwPad').onclick = e => { const k = e.target.closest('[data-d]'); if (k) typeBetween(k.dataset.d); };
+$('btwDel').onclick = () => typeBetween('');
+$('btwOk').onclick = checkBetween;
+addEventListener('keydown', e => {
+  if (mode !== 'between') return;
+  if (/^[0-9]$/.test(e.key)) typeBetween(e.key);
+  else if (e.key === 'Backspace') typeBetween('');
+  else if (e.key === 'Enter') checkBetween();
+});
 function newBetween() {
-  btwLocked = false;
+  btwLocked = false; btwInput = ''; btwMisses = 0;
   let lo;
   do { lo = rand(MAX - 1); } while (lo === btwLo);
   btwLo = lo;
-  const ans = lo + 1, hi = lo + 2;
-
-  const pool = shuffle([ans + 2, ans - 2, ans + 3, ans - 3, ans + 4]);
-  const opts = [ans];
-  for (const x of pool) {
-    if (opts.length === 3) break;
-    if (x >= 0 && x <= MAX && x !== lo && x !== hi && !opts.includes(x)) opts.push(x);
-  }
-  shuffle(opts);
-
+  const hi = lo + 2;
   $('btwSeq').innerHTML = `<div class="ball">${lo}</div><div class="ball blank" id="btwBlank">?</div><div class="ball">${hi}</div>`;
-  $('btwOpts').innerHTML = '';
-  opts.forEach(o => {
-    const b = document.createElement('button');
-    b.className = 'opt'; b.textContent = o;
-    b.onclick = () => answerBetween(o, b);
-    $('btwOpts').appendChild(b);
-  });
+  $('btwOk').disabled = true;
   $('btwHelp').hidden = true;
   $('btwQ').textContent = `What number is between ${lo} and ${hi}?`;
   setMsg(`What number is between ${lo} and ${hi}?`);
   say(`What number is between ${lo} and ${hi}?`);
 }
-function showBetweenHelp(lo) {
+function typeBetween(d) {
+  if (btwLocked) return;
+  btwInput = d; // the answer is always one digit (1-9)
+  const bl = $('btwBlank');
+  bl.textContent = d || '?';
+  bl.classList.toggle('typed', !!d);
+  $('btwOk').disabled = !d;
+  if (d) say(d);
+}
+function showBetweenHelp(lo, glow) {
   btwLineCells = buildGrid($('btwLine'));
   btwLineCells[lo].classList.add('lit');
   btwLineCells[lo + 2].classList.add('lit');
-  btwLineCells[lo + 1].classList.add('hint');
+  if (glow) btwLineCells[lo + 1].classList.add('hint');
   $('btwHelp').hidden = false;
 }
-function answerBetween(o, b) {
-  if (btwLocked || b.disabled) return;
-  const lo = btwLo, ans = lo + 1, hi = lo + 2;
-  if (o === ans) {
+function checkBetween() {
+  if (btwLocked || !btwInput) return;
+  const lo = btwLo, ans = lo + 1, hi = lo + 2, bl = $('btwBlank');
+  if (+btwInput === ans) {
     btwLocked = true;
-    b.classList.add('right');
-    const bl = $('btwBlank');
-    bl.textContent = ans; bl.classList.remove('blank'); bl.classList.add('filled');
-    sfxDing(); celebrate(); addStars(1);
+    bl.textContent = ans; bl.classList.remove('blank', 'typed'); bl.classList.add('filled');
+    $('btwOk').disabled = true;
+    sfxDing(); celebrate();
+    // a star only for getting it right on the first try
+    if (btwMisses === 0) addStars(1);
     const p = pick(PRAISE);
     setMsg(`${p} ${lo}, ${ans}, ${hi}`);
     say(`${p} ${lo}, ${ans}, ${hi}!`);
     if (!$('btwHelp').hidden) btwLineCells[ans].classList.add('lit');
     setTimeout(() => { if (mode === 'between') newBetween(); }, 3000);
   } else {
-    b.classList.add('wrong'); b.disabled = true;
+    btwMisses++;
+    const wrong = btwInput;
+    bl.classList.remove('shake'); void bl.offsetWidth; bl.classList.add('shake');
+    btwInput = ''; bl.textContent = '?'; bl.classList.remove('typed');
+    $('btwOk').disabled = true;
     sfxBuzz();
-    showBetweenHelp(lo);
-    setMsg(`Oops! Count with me: ${lo}, ... , ${hi}. Look at the glowing number!`);
-    say(`Oops! Let's count. ${lo}, hmm, ${hi}. What comes after ${lo}?`);
+    showBetweenHelp(lo, btwMisses >= 2);
+    if (btwMisses >= 2) {
+      setMsg(`Here's a hint! Look for the glowing number.`);
+      say(`Here's a hint! What comes after ${lo}?`);
+    } else {
+      setMsg(`Not ${wrong}. Count with me: ${lo}, ... , ${hi}.`);
+      say(`Not ${wrong}. Let's count. ${lo}, hmm, ${hi}. What comes after ${lo}?`);
+    }
   }
 }
 
